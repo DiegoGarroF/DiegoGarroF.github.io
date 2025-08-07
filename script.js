@@ -316,3 +316,92 @@ if ('IntersectionObserver' in window) {
     const lazyImages = document.querySelectorAll('img[data-src]');
     lazyImages.forEach(img => imageObserver.observe(img));
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Toggle del menú
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        navToggle.classList.toggle('active');
+        document.body.classList.toggle('nav-open');
+    });
+
+    // Cerrar menú al hacer click en un enlace
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            document.body.classList.remove('nav-open');
+        });
+    });
+
+    // Cerrar menú al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            document.body.classList.remove('nav-open');
+        }
+    });
+
+    // Cerrar menú con tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            document.body.classList.remove('nav-open');
+        }
+    });
+});
+
+// Detectar orientación del dispositivo
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        // Recalcular altura del viewport
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }, 100);
+});
+
+// Establecer altura del viewport inicial
+const vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+// Optimización del scroll en móviles
+let ticking = false;
+
+function updateScrollEffects() {
+    // Tu código de efectos de scroll aquí
+    ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        requestAnimationFrame(updateScrollEffects);
+        ticking = true;
+    }
+});
+
+// Touch gestures mejorados
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.addEventListener('touchmove', (e) => {
+    // Prevenir scroll horizontal accidental
+    const touchCurrentX = e.touches[0].clientX;
+    const touchCurrentY = e.touches[0].clientY;
+    
+    const diffX = Math.abs(touchCurrentX - touchStartX);
+    const diffY = Math.abs(touchCurrentY - touchStartY);
+    
+    if (diffX > diffY) {
+        e.preventDefault();
+    }
+}, { passive: false });
